@@ -1,64 +1,36 @@
 extends ../includes/layout
 include ../includes/bootstrap_mixins
 
+mixin dvRow(label)
+  .col-md-2(data-dvType=label.toLowerCase())
+    .row
+      .col-md-2
+      p.h2.col-md-6.text-center=label
+    - for (var i = 0; i <= 15; i++)
+      - var id = `${label}${i}`;
+      .form-row.form-group
+        label.col-form-label.col-md-2.text-center(for=id)=i
+        button.form-control.col-md-6(type="button" id=id data-dv=i data-dvType=label.toLowerCase()) 0
+
 prepend pageStyles
-  - var pageTitle = "Gen 1 Catch Rates"
+  - var pageTitle = "Gen 1 DVs"
 
 append pageContent
   .container-fluid
-    -
-      const pokeballs = require("./src/data/pokeballs.json");
-      const pokedex = require("./src/data/pokedex.json").sort((a, b) => {
-        return a["name"].localeCompare(b["name"]);
-      });
-      const statuseffects = require("./src/data/statuseffects.json");
-    form
-      .form-row
-        .col-md.form-group
-          label(for="game") Game
-          select.form-control(id="game" aria-describedby="gameHelp")
-            option(value="RB") Red/Blue
-            option(value="Y") Yellow
-          small.form-text.text-muted(id="gameHelp") The game you're playing
-        .col-md.form-group
-          label(for="ball") Poke Ball Type
-          select.form-control(id="ball" aria-describedby="ballHelp")
-            each ballData in pokeballs
-              option(value!=ballData)=ballData.ballName
-          small.form-text.text-muted(id="ballHelp") The poke ball you want to use
-        .col-md.form-group
-          label(for="level") Encounter Level
-          input.form-control(type="number" id="level" aria-describedby="levelHelp")
-          small.form-text.text-muted(id="levelHelp") The level of the Pokemon you want to catch 1-100
-      .form-row
-        .col-md.form-group
-          label(for="species") Encounter Species
-          select.form-control(id="species" aria-describedby="speciesHelp" style="text-transform: capitalize;")
-            each pokemon in pokedex
-              option(value!=pokemon)=pokemon.name.toLowerCase()
-          small.form-text.text-muted(id="speciesHelp") Which pokemon you're encountering
-        .col-md.form-group
-          label(for="status") Status Effect
-          select.form-control(id="status" aria-describedby="statusHelp" style="text-transform: capitalize;")
-            each statusModifier, statusLabel in statuseffects
-              option(value=statusModifier)=statusLabel
-          small.form-text.text-muted(id="statusHelp") Status effect if any
-        .col-md.form-group
-          label(for="hpRange") % of Max HP
-          input.form-control-range(type="range" id="hpRange")
-      .form-row
-        .col-md.form-group
-          button.btn.btn-primary(type="button") Check Catch Rate
-      .form-row
-        .col-md.form-group
-          p Actual Catch Chance
-          p.actualRate
-          +progressBar("actualRate")
-      .form-row
-        .col-md.form-group
-          p Intended Catch Chance
-          p.intendedRate
-          +progressBar("intendedRate")
+    h1 Pokemon Yellow DV Calculator
+    p.lead For use with Glitchless Classic Speedruns
+    .row.dvButtons
+      +dvRow("HP")
+      +dvRow("Attack")
+      +dvRow("Defense")
+      +dvRow("Speed")
+      +dvRow("Special")
+    .row
+      .col-md-2.form-group
+        label(for="level") Nido's Level
+        input.form-control(type="number" id="level" aria-describedby="levelHelp" value=6 min=6 max=23)
+
+    
 
 append pageScripts
   script(src="js/main.js")

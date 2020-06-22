@@ -1,69 +1,59 @@
 var stats = {nidoran: {hp:46, attack: 57, defense: 40, speed: 50, special: 40},
-    nidoking: {hp:81, attack: 92, defense: 77, speed: 85, special: 75}}
+    nidoking: {hp:81, attack: 92, defense: 77, speed: 85, special: 75}};
+var statExp = [
+    {hp: 0, attack: 0, defense: 0, speed: 0, special: 0},
+    {hp: 45, attack: 30, defense: 35, speed: 45, special: 20},
+    {hp: 90, attack: 60, defense: 70, speed: 90, special: 40},
+    {hp: 135, attack: 90, defense: 105, speed: 135, special: 60},
+    {hp: 230, attack: 140, defense: 195, speed: 210, special: 105},
+    {hp: 240, attack: 195, defense: 220, speed: 305, special: 150},
+    {hp: 290, attack: 270, defense: 305, speed: 345, special: 180},
+    {hp: 365, attack: 395, defense: 565, speed: 435, special: 240},
+    {hp: 450, attack: 460, defense: 630, speed: 530, special: 280},
+    {hp: 560, attack: 606, defense: 744, speed: 702, special: 365},
+    {hp: 740, attack: 716, defense: 914, speed: 862, special: 455},
+    {hp: 955, attack: 876, defense: 1104, speed: 1062, special: 595},
+    {hp: 1030, attack: 1001, defense: 1243, speed: 1152, special: 695},
+    {hp: 1150, attack: 1171, defense: 1403, speed: 1347, special: 826},
+    {hp: 1330, attack: 1387, defense: 1608, speed: 1559, special: 966},
+    {hp: 1570, attack: 1675, defense: 1844, speed: 1888, special: 1166},
+    {hp: 1570, attack: 1675, defense: 1844, speed: 1888, special: 1166},
+    {hp: 1570, attack: 1675, defense: 1844, speed: 1888, special: 1166}
+];
 
-$('button').click(function () {
-    var intendedRate = 0;
-    var actualSuccesses = 0;
-    var pokemon = JSON.parse($('#species').val());
-    var ball = JSON.parse($('#ball').val());
+function updateDVStatText() {
     var level = parseInt($('#level').val());
-    var currentHPPercent = Math.max(parseInt($('#hpRange').val()), 1);
-    var status = $('#status').val();
-    var game = $('#game').val();
-    if (game === "RB") {
-        if (["DRAGONAIR", "DRAGONITE"].includes(pokemon.name)) {
-            pokemon.catchRate = 45;
+    var nidoEvolution = level < 17 ? "nidoran" : "nidoking";
+    $('button:not(.d-none)').each(function() {
+        var thisDV = $(this);
+        var dv = parseInt(thisDV.attr("data-dv"));
+        var dvType = thisDV.attr("data-dvtype");
+        var newStat = Math.floor(Math.floor((stats[nidoEvolution][dvType]+dv)*2+Math.floor(Math.ceil(Math.sqrt(statExp[level-6][dvType]))/4))*level/100)+5;
+        if (dvType === "hp") {
+            newStat += level+5;
         }
-    }
-    var reroll1Cycles = gameSpecificCycleCounts[game].reroll1;
-    var reroll2Cycles = gameSpecificCycleCounts[game].reroll2;
+        this.innerText = newStat;
+    });
+}
 
-    for (var hpDV = 0; hpDV < 16; hpDV++) {
-        var maxHP = (((pokemon.baseHP + hpDV) * 2 * level / 100) >> 0) + level + 10;
-        var hpFactor = (((maxHP * 255) / ball.ballFactor) >> 0);
-        var currentHPModifier = (((maxHP * (currentHPPercent / 100)) >> 0) / 4) >> 0;
-        if (currentHPModifier > 0) {
-            hpFactor = (hpFactor / currentHPModifier) >> 0;
-        }
-        hpFactor = Math.min(hpFactor, 255);
-        intendedRate += status / ball.ballRerollCutoff + Math.min(pokemon.catchRate + 1, ball.ballRerollCutoff - status) / ball.ballRerollCutoff * (hpFactor + 1) / 256;
-        for (var initialRNGByte = 0; initialRNGByte < 256; initialRNGByte++) {
-            if (initialRNGByte < status) {
-                actualSuccesses += 16384;
-            } else {
-                for (var initialDividerWord = 0; initialDividerWord < 65536; initialDividerWord += 4) {
-                    var catchMon = false;
-                    var currentDividerWord = initialDividerWord;
-                    var currentRNGByte = initialRNGByte;
-                    do {
-                        currentRNGByte = (currentRNGByte + (currentDividerWord >>> 8)) & 0xFF;
-                        if (ball.reroll1 && currentRNGByte > 200) {
-                            currentDividerWord = (currentDividerWord + reroll1Cycles) & 0xFFFF;
-                        }
-                        else if (ball.reroll2 && currentRNGByte > 150) {
-                            currentDividerWord = (currentDividerWord + reroll2Cycles) & 0xFFFF;
-                        } else {
-                            break;
-                        }
-                    }
-                    while (true);
-                    if (currentRNGByte <= pokemon.catchRate) {
-                        currentDividerWord = (currentDividerWord + roll2Cycles) & 0xFFFF;
-                        currentRNGByte = (currentRNGByte + (currentDividerWord >>> 8)) & 0xFF;
-                        catchMon = currentRNGByte <= hpFactor;
-                    }
-                    actualSuccesses += catchMon ? 1 : 0;
-                }
-            }
-        }
-    }
+updateDVStatText();
 
-    function setRateBar(progressBarClass, percent) {
-        var progressBar = $(`#${progressBarClass}`);
-        progressBar.css("width", `${percent}%`).attr("aria-valuenow", percent);
-        $(`.${progressBarClass}`).html(`${percent}%`);
-        progressBar[0].className = `progress-bar ${percent >= 50 ? 'bg-success' : 'bg-danger'}`
-    }
-    setRateBar('actualRate', parseFloat(actualSuccesses / 671088.64).toFixed(2));
-    setRateBar('intendedRate', parseFloat(100 * intendedRate / 16).toFixed(2));
+$('.dvButtons').on('click', 'button', function () {
+    updateDVStatText();
+    var thisDV = $(this);
+    var statChosen = this.innerText;
+    var dvType = thisDV.attr("data-dvtype");
+    $(`button[data-dvtype=${dvType}]`).each(function() {
+        if (this.innerText != statChosen  && !thisDV.is(this)) {
+            this.classList.add("d-none");
+        }
+    });
+    //todo: remove HPs that are incompatible with known info
+    //todo: consider eliminating "impossible" nidos
+});
+
+$('#level').on('change', function () {
+    if (this.value < 6) this.value = 6;
+    if (this.value > 23) this.value = 23;
+    updateDVStatText()
 });
