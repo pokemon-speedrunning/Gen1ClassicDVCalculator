@@ -48,7 +48,8 @@ $('.dvButtons').on('click', 'button', function () {
             this.classList.add("d-none");
         }
     });
-    //todo: remove HPs that are incompatible with known info
+    //todo: remove HPs that are incompatible with known info for other DVs
+    //todo: remove other DVs incompatible with known HPs
     //todo: consider eliminating "impossible" nidos
 });
 
