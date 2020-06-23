@@ -35,35 +35,35 @@ function bit_test(num, bit) {
     return ((num >> bit) % 2 != 0);
 }
 
-function arrayHasNumberWithBit(array, bit) {
+function allNumbersHaveBit(array, bit) {
     return !array.map(num => bit_test(num, bit)).some(x => x === true);
 }
 
-function arrayMissingNumberWithBit(array, bit) {
+function noNumbersHaveBit(array, bit) {
     return !array.map(num => bit_test(num, bit)).some(x => x === false);
 }
 
-function filterBitFromArray(array, bit) {
+function removeNumbersWithBit(array, bit) {
     return array.filter(num => !bit_test(num, bit));
 }
 
-function requireBitInArray(array, bit) {
+function removeNumbersWithoutBit(array, bit) {
     return array.filter(num => bit_test(num, bit));
 }
 
 function updatePossibleDVs() {
     for (var bit = 0; bit <=3; bit++) {
         //remove DVs incompatible with known HPs
-        if (arrayHasNumberWithBit(possibleDVs["hp"], bit)) {
-            possibleDVs[dvBits[bit]] = filterBitFromArray(possibleDVs[dvBits[bit]], 0);
-        } else if (arrayMissingNumberWithBit(possibleDVs["hp"], bit)) {
-            possibleDVs[dvBits[bit]] = requireBitInArray(possibleDVs[dvBits[bit]], 0);
+        if (allNumbersHaveBit(possibleDVs["hp"], bit)) {
+            possibleDVs[dvBits[bit]] = removeNumbersWithBit(possibleDVs[dvBits[bit]], 0);
+        } else if (noNumbersHaveBit(possibleDVs["hp"], bit)) {
+            possibleDVs[dvBits[bit]] = removeNumbersWithoutBit(possibleDVs[dvBits[bit]], 0);
         }
         //remove HP DVs that are incompatible with other DVs
-        if (arrayHasNumberWithBit(possibleDVs[dvBits[bit]], 0)) {
-            possibleDVs["hp"] = filterBitFromArray(possibleDVs["hp"], bit);
-        } else if (arrayMissingNumberWithBit(possibleDVs[dvBits[bit]], 0)) {
-            possibleDVs["hp"] = requireBitInArray(possibleDVs["hp"], bit);
+        if (allNumbersHaveBit(possibleDVs[dvBits[bit]], 0)) {
+            possibleDVs["hp"] = removeNumbersWithBit(possibleDVs["hp"], bit);
+        } else if (noNumbersHaveBit(possibleDVs[dvBits[bit]], 0)) {
+            possibleDVs["hp"] = removeNumbersWithoutBit(possibleDVs["hp"], bit);
         }
     }
     //repopulate the buttons
@@ -91,9 +91,8 @@ updatePossibleDVs();
 
 $('.dvButtons').on('click', 'button', function () {
     let thisButton = $(this);
-    let removeDVs = thisButton.data("removedvs");
     let dvType = thisButton.data("dvtype");
-    possibleDVs[dvType] = possibleDVs[dvType].filter(dv => !removeDVs.includes(dv));
+    possibleDVs[dvType] = possibleDVs[dvType].filter(dv => !thisButton.data("removedvs").includes(dv));
     updatePossibleDVs();
     //todo: consider eliminating "impossible" nidos
 });
