@@ -1,11 +1,16 @@
 extends ../includes/layout
 include ../includes/bootstrap_mixins
 
-mixin dvRow(label)
-  .col-md-2.col-4(data-dvType=label.toLowerCase())
+mixin statRow(label)
+  .col-md-2.col-4(data-statType=label.toLowerCase())
     .row
       .col-md-2
-      p.h4.col-md-6.text-center=label
+      p.h4.col-md-6=label
+
+mixin dvRow(label)
+  .col-md-2.col-4(data-dvType=label.toLowerCase())
+    p.h4=label
+    p.dvRange
 
 prepend pageStyles
   - var pageTitle = "Gen 1 DVs"
@@ -14,18 +19,34 @@ append pageContent
   .container-fluid
     h1 Pokemon Yellow DV Calculator
     p.lead For use with Glitchless Classic Speedruns
+    hr
     .form-row
       .col-md-2.form-group
         button.btn.btn-danger(type="button" id="reset") Reset!
-      .col-md-4.form-row
+      .col-md-4.form-group.form-row
         label.col-md.col-form-label(for="level") Nido's Level
-        input.col-md.form-control(type="number" id="level" aria-describedby="levelHelp" value=6 min=6 max=23)
-    .row.dvButtons
+        .input-group.col-md
+          .input-group-prepend
+            button.btn.btn-primary(type="button" id="decrementLevel") -
+          input.form-control(type="number" id="level" value=6 min=6 max=23)
+          .input-group-append
+            button.btn.btn-primary(type="button" id="incrementLevel") +
+    hr
+    p.h3 Possible DVs
+    .row
       +dvRow("HP")
       +dvRow("Attack")
       +dvRow("Defense")
       +dvRow("Speed")
       +dvRow("Special")
+    hr
+    p.lead Click a Stat to Narrow Possible DVs
+    .row.dvButtons
+      +statRow("HP")
+      +statRow("Attack")
+      +statRow("Defense")
+      +statRow("Speed")
+      +statRow("Special")
 
 append pageScripts
   script(src="js/main.js")
