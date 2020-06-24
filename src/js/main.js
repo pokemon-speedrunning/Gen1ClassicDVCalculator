@@ -89,11 +89,8 @@ function updatePossibleDVs() {
         let highestPossibleDV = possibleDVsForType[possibleDVsForType.length-1];
         dvList.append(lowestPossibleDV === highestPossibleDV ? lowestPossibleDV : `${lowestPossibleDV}-${highestPossibleDV}`);
         [...new Set(possibleStats)].forEach(stat => {
-            let lowDV = possibleDVsForType[possibleStats.indexOf(stat)];
-            let highDV = possibleDVsForType[possibleStats.lastIndexOf(stat)];
-            let dvRange = lowDV === highDV ? highDV : `${lowDV}-${highDV}`;
             let impossibleDVsThisStat = possibleDVsForType.filter((dv, index) => possibleStats[index] != stat);
-            statList.append(`<div class="form-row form-group"><label class="col-form-label col-md-6 text-center" for="${dvRange}">${dvRange}</label><button class="form-control col-md-6 btn btn-primary" type="button" id="${dvRange}" data-removedvs="[${impossibleDVsThisStat}]" data-dvtype="${dvType}">${stat}</button></div>`);
+            statList.append(`<div class="form-row form-group"><label class="sr-only" for="${stat}${dvType}">${stat} ${dvType}</label><button class="form-control btn btn-primary" type="button" id="${stat}${dvType}" data-removedvs="[${impossibleDVsThisStat}]" data-dvtype="${dvType}">${stat}</button></div>`);
         });
     }
 }

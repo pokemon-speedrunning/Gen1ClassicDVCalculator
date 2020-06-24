@@ -4,8 +4,7 @@ include ../includes/bootstrap_mixins
 mixin statRow(label)
   .col-md-2.col-4(data-statType=label.toLowerCase())
     .row
-      .col-md-2
-      p.h4.col-md-6=label
+      p.h4.col.text-center=label
 
 mixin dvRow(label)
   .col-md-2.col-4(data-dvType=label.toLowerCase())
@@ -28,7 +27,7 @@ append pageContent
         .input-group.col-md
           .input-group-prepend
             button.btn.btn-primary(type="button" id="decrementLevel") -
-          input.form-control(type="number" id="level" value=6 min=6 max=23)
+          input.form-control(type="number" id="level" style="-webkit-appearance: none; -moz-appearance: textfield;" value=6 min=6 max=23)
           .input-group-append
             button.btn.btn-primary(type="button" id="incrementLevel") +
     hr
