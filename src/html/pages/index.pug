@@ -2,34 +2,22 @@ extends ../includes/layout
 include ../includes/bootstrap_mixins
 
 mixin statRow(label)
-  .col-md-2.col-4(data-statType=label.toLowerCase())
-    .row
-      p.h4.col.text-center=label
+  .col-2(data-statType=label.toLowerCase())
+    p.h6=label
+    .btn-group-vertical(role="group" aria-label=`Possible ${label.toLowerCase()} stats`)
 
 mixin dvRow(label)
-  .col-md-2.col-4(data-dvType=label.toLowerCase())
-    p.h4=label
+  .col-2(data-dvType=label.toLowerCase())
+    p.h6=label
     p.dvRange
 
 prepend pageStyles
   - var pageTitle = "Gen 1 DVs"
 
 append pageContent
-  .container-fluid
+  .container
     h1 Pokemon Yellow DV Calculator
     p.lead For use with Glitchless Classic Speedruns
-    hr
-    .form-row
-      .col-md-2.form-group
-        button.btn.btn-danger(type="button" id="reset") Reset!
-      .col-md-4.form-group.form-row
-        label.col-md.col-form-label(for="level") Nido's Level
-        .input-group.col-md
-          .input-group-prepend
-            button.btn.btn-primary(type="button" id="decrementLevel") -
-          input.form-control(type="number" id="level" style="-webkit-appearance: none; -moz-appearance: textfield;" value=6 min=6 max=23)
-          .input-group-append
-            button.btn.btn-primary(type="button" id="incrementLevel") +
     hr
     p.h3 Possible DVs
     .row
@@ -46,6 +34,19 @@ append pageContent
       +statRow("Defense")
       +statRow("Speed")
       +statRow("Special")
+    .fixed-bottom.container
+      hr
+      .row
+        .form-group
+          label.col-form-label(for="level") Nido's Level
+        .input-group.form-group.col-6.col-md-3
+          .input-group-prepend
+            button.btn.btn-primary(type="button" id="decrementLevel") -
+          input.form-control(type="number" id="level" value=6 min=6 max=23)
+          .input-group-append
+            button.btn.btn-primary(type="button" id="incrementLevel") +
+        .form-group.col-3
+          button.btn.btn-danger(type="button" id="reset") Reset!
 
 append pageScripts
   script(src="js/main.js")

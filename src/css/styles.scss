@@ -1,5 +1,9 @@
 @import "modules/colors.scss";
 
+body {
+    padding-bottom: 87px;
+}
+
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
     -webkit-appearance: none;

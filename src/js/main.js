@@ -82,15 +82,15 @@ function updatePossibleDVs() {
         if (dvType === "hp") {
             possibleStats = possibleStats.map((stat) => stat + level + 5);
         }
-        let statList = $(`[data-statType="${dvType}"]`);
-        statList.find('.form-row').remove();
+        let statList = $(`[data-statType="${dvType}"] .btn-group-vertical`);
+        statList.find('button').remove();
         let dvList = $(`[data-dvType="${dvType}"]`).find('.dvRange').empty();
         let lowestPossibleDV = possibleDVsForType[0];
         let highestPossibleDV = possibleDVsForType[possibleDVsForType.length-1];
         dvList.append(lowestPossibleDV === highestPossibleDV ? lowestPossibleDV : `${lowestPossibleDV}-${highestPossibleDV}`);
         [...new Set(possibleStats)].forEach(stat => {
             let impossibleDVsThisStat = possibleDVsForType.filter((dv, index) => possibleStats[index] != stat);
-            statList.append(`<div class="form-row form-group"><label class="sr-only" for="${stat}${dvType}">${stat} ${dvType}</label><button class="form-control btn btn-primary" type="button" id="${stat}${dvType}" data-removedvs="[${impossibleDVsThisStat}]" data-dvtype="${dvType}">${stat}</button></div>`);
+            statList.append(`<button class="btn btn-primary" type="button" data-removedvs="[${impossibleDVsThisStat}]" data-dvtype="${dvType}">${stat}</button`);
         });
     }
 }
