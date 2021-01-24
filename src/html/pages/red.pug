@@ -1,0 +1,54 @@
+extends ../includes/layout
+include ../includes/bootstrap_mixins
+
+mixin statRow(label)
+  .col-2(data-statType=label.toLowerCase())
+    p.h6=label
+    .btn-group-vertical.btn-group-lg(role="group" aria-label=`Possible ${label.toLowerCase()} stats`)
+
+mixin dvRow(label)
+  .col-2(data-dvType=label.toLowerCase())
+    p.h6=label
+    p.dvRange
+
+prepend pageStyles
+  - var pageTitle = "Red Classic DVs"
+
+append pageContent
+  .container
+    h1 Pokemon Red DV Calculator
+    p.lead For use with Glitchless Classic Speedruns
+  .border-top.border-bottom.pt-2.bg-light
+    .container
+      p.h3 Possible DVs
+      .row
+        +dvRow("HP")
+        +dvRow("Attack")
+        +dvRow("Defense")
+        +dvRow("Speed")
+        +dvRow("Special")
+  .container
+    p.lead Click a Stat to Narrow Possible DVs
+    .row.dvButtons
+      +statRow("HP")
+      +statRow("Attack")
+      +statRow("Defense")
+      +statRow("Speed")
+      +statRow("Special")
+    .fixed-bottom.bg-light
+      hr
+      .container
+        .row
+          .form-group
+            label.col-form-label(for="level") Nido's Level
+          .input-group.form-group.col-6.col-md-3
+            .input-group-prepend
+              button.btn.btn-primary(type="button" id="decrementLevel") -
+            input.form-control(type="number" id="level" value=3 min=3 max=14)
+            .input-group-append
+              button.btn.btn-primary(type="button" id="incrementLevel") +
+          .form-group.col-3
+            button.btn.btn-danger(type="button" id="reset") Reset!
+
+append pageScripts
+  script(src="js/red.js")
